@@ -13,6 +13,9 @@ class _TesttlgState extends State<Conv> {
   TextEditingController messageController = TextEditingController();
 
   String searchQuery = "";
+  final ScrollController _messageScrollController = ScrollController();
+  ScrollController _convScrollController = ScrollController();
+
   List<User> allUsers = [
     User(id: "1", name: "user1", avatarUrl: "https://i.pravatar.cc/150?img=1"),
     User(id: "2", name: "user2", avatarUrl: "https://i.pravatar.cc/150?img=2"),
@@ -67,6 +70,15 @@ class _TesttlgState extends State<Conv> {
       );
       messageController.clear();
     });
+     Future.delayed(Duration(milliseconds: 100), () {
+    if (_messageScrollController.hasClients) {
+      _messageScrollController.animateTo(
+        _messageScrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  });
   }
 
   @override
@@ -149,6 +161,7 @@ class _TesttlgState extends State<Conv> {
                           },
                         )
                       : ListView.builder(
+                          controller: _convScrollController,
                           itemCount: conversations.length,
                           itemBuilder: (context, index) {
                             final conv = conversations[index];
@@ -202,6 +215,7 @@ class _TesttlgState extends State<Conv> {
                             child: conversation == null
                                 ? const Center(child: Text('No messages yet'))
                                 : ListView.builder(
+                                  controller: _messageScrollController,
                                     itemCount: conversation.messages.length,
                                     itemBuilder: (context, index) {
                                       final msg = conversation.messages[index];
